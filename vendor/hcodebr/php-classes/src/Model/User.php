@@ -159,7 +159,7 @@ class User extends Model
         ));
     }
 
-    public static function getForgot($email)
+    public static function getForgot($email, $inadmin = true)
     {
         $sql = new Sql();
 
@@ -191,7 +191,14 @@ class User extends Model
                 $code = openssl_encrypt($dataRecovery, "aes-256-cbc", $encryption_key, 0, $iv);
                 $result = base64_encode($code . "::" . $iv);
 
-                $link = "http://www.ecommerce.com.br/admin/forgot/reset?code=$result";
+                if ($inadmin === true) {
+
+                    $link = "http://www.ecommerce.com.br/admin/forgot/reset?code=$result";
+
+                } else {
+
+                    $link = "http://www.ecommerce.com.br/forgot/reset?code=$result";
+                }
 
                 $mailer = new Mailer($data["desemail"], $data["desperson"], "Redefinir senha do Ecommerce", "forgot", array(
                     "name" => $data["desperson"],
