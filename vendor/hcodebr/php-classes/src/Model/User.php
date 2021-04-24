@@ -52,7 +52,7 @@ class User extends Model
 
         $sql = new Sql();
 
-        $results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :LOGIN", array(
+        $results = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b ON a.idperson = b.idperson WHERE deslogin = :LOGIN", array(
             ":LOGIN" => $login,
         ));
 
@@ -65,7 +65,7 @@ class User extends Model
         if (password_verify($password, $data["despassword"]) === true) {
             $user = new User();
 
-            $data["desperson"] = utf8_encode($data["desperson"]);
+            $data["deslogin"] = utf8_encode($data["deslogin"]);
 
             $user->setData($data);
 
@@ -272,9 +272,21 @@ class User extends Model
         $_SESSION[User::ERROR] = null;
     }
 
+    public static function getErrorRegister()
+    {
+
+        $msg = (isset($_SESSION[User::ERROR_REGISTER]) && $_SESSION[User::ERROR_REGISTER]) ? $_SESSION[User::ERROR_REGISTER] : "";
+
+        User::clearError();
+
+        return $msg;
+
+    }
+
     public static function setErrorRegister($msg)
     {
         $_SESSION[User::ERROR_REGISTER] = $msg;
+
     }
 
     public static function getPasswordHash($password)
